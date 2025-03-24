@@ -1,15 +1,15 @@
 version: '3.8'
-
+name: testing-deployments
 services:
   web:
-    image: nginx:${DOCKER_TAG:-latest}
+    image: nginx:latest
     ports:
       - "8080:80"
     depends_on:
       - api
 
   api:
-    image: node:${DOCKER_TAG:-lts-alpine}
+    image: node:lts-alpine
     command: ["node", "-e", "const http=require('http');const server=http.createServer((req,res)=>{res.end('Hello from API v'+process.env.DOCKER_TAG)});server.listen(3000);"]
     environment:
       - DOCKER_TAG=${DOCKER_TAG:-latest}
@@ -17,6 +17,6 @@ services:
       - "3000"
 
   redis:
-    image: redis:${DOCKER_TAG:-alpine}
+    image: redis:alpine
     expose:
       - "6379"
