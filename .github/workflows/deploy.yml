@@ -1,0 +1,51 @@
+name: Deploy Stack
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy-staging:
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - uses: actions/checkout@v4
+
+      # Get short SHA for docker tag
+      - name: Get short SHA
+        id: sha
+        run: echo "short=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
+
+      - name: Deploy to Staging
+        uses: ./.github/actions/docker-deploy
+        with:
+          ssh_user: ${{ secrets.SSH_USER }}
+          ssh_key: ${{ secrets.SSH_KEY }}
+          ssh_host: ${{ secrets.SSH_HOST }}
+          compose_file: docker-compose.yml
+          docker_tag: ${{ steps.sha.outputs.short }}
+
+  deploy-production:
+    needs: deploy-staging
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+
+      # Get short SHA for docker tag
+      - name: Get short SHA
+        id: sha
+        run: echo "short=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
+
+      - name: Deploy to Production
+        uses: ./.github/actions/docker-deploy
+        with:
+          ssh_user: ${{ secrets.SSH_USER }}
+          ssh_key: ${{ secrets.SSH_KEY }}
+          ssh_host: ${{ secrets.SSH_HOST }}
+          compose_file: docker-compose.yml
+          docker_tag: ${{ steps.sha.outputs.short }}

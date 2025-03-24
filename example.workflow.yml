@@ -1,0 +1,66 @@
+name: Deploy with Docker
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  # Allow manual trigger
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Example 1: Basic deployment to staging
+      - name: Deploy to staging
+        uses: ./
+        with:
+          ssh_user: ${{ secrets.SSH_USER }}
+          ssh_key: ${{ secrets.SSH_PRIVATE_KEY }}
+          ssh_host: staging.example.com
+          docker_tag: ${{ github.sha::7 }}
+          compose_file: docker/staging/docker-compose.yml
+
+      # Example 2: Deploy to production with custom port
+      - name: Deploy to production
+        if: github.ref == 'refs/heads/main'
+        uses: ./
+        with:
+          ssh_user: ${{ secrets.PROD_SSH_USER }}
+          ssh_key: ${{ secrets.PROD_SSH_KEY }}
+          ssh_host: prod.example.com
+          ssh_port: 2222  # Custom SSH port
+          docker_tag: ${{ github.sha::7 }}
+          compose_file: docker/prod/docker-compose.yml
+
+  # Example 3: Matrix deployment to multiple environments
+  matrix-deploy:
+    needs: deploy  # Run after main deployment
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        environment: ['eu-1', 'eu-2', 'us-1']
+        include:
+          - environment: eu-1
+            host: eu1.example.com
+            compose_file: docker/eu1/docker-compose.yml
+          - environment: eu-2
+            host: eu2.example.com
+            compose_file: docker/eu2/docker-compose.yml
+          - environment: us-1
+            host: us1.example.com
+            compose_file: docker/us1/docker-compose.yml
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy to ${{ matrix.environment }}
+        uses: ./
+        with:
+          ssh_user: ${{ secrets.SSH_USER }}
+          ssh_key: ${{ secrets.SSH_KEY }}
+          ssh_host: ${{ matrix.host }}
+          docker_tag: ${{ github.sha::7 }}
+          compose_file: ${{ matrix.compose_file }}

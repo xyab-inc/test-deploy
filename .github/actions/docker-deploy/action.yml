@@ -1,0 +1,32 @@
+name: 'Docker Action'
+description: 'Deploy Docker Compose applications via SSH'
+inputs:
+  ssh_user:
+    description: 'SSH username'
+    required: true
+  ssh_key:
+    description: 'SSH private key'
+    required: true
+  ssh_host:
+    description: 'SSH host'
+    required: true
+  ssh_port:
+    description: 'SSH port'
+    required: false
+    default: '22'
+  compose_file:
+    description: 'Path to docker-compose.yml file (relative to workspace)'
+    required: true
+  docker_tag:
+    description: 'The 7-character commit SHA'
+    required: true
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  env:
+    SSH_USER: ${{ inputs.ssh_user }}
+    SSH_KEY: ${{ inputs.ssh_key }}
+    SSH_HOST: ${{ inputs.ssh_host }}
+    SSH_PORT: ${{ inputs.ssh_port }}
+    COMPOSE_FILE: ${{ inputs.compose_file }}
+    DOCKER_TAG: ${{ inputs.docker_tag }}

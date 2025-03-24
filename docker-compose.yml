@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  web:
+    image: nginx:${DOCKER_TAG:-latest}
+    ports:
+      - "8080:80"
+    depends_on:
+      - api
+
+  api:
+    image: node:${DOCKER_TAG:-lts-alpine}
+    command: ["node", "-e", "const http=require('http');const server=http.createServer((req,res)=>{res.end('Hello from API v'+process.env.DOCKER_TAG)});server.listen(3000);"]
+    environment:
+      - DOCKER_TAG=${DOCKER_TAG:-latest}
+    expose:
+      - "3000"
+
+  redis:
+    image: redis:${DOCKER_TAG:-alpine}
+    expose:
+      - "6379"
