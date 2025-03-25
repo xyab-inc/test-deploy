@@ -10,7 +10,7 @@ on:
 jobs:
   deploy-staging:
     #runs-on: ubuntu-latest
-    runs-on: self-hosted
+    runs-on: Default
     steps:
       - uses: actions/checkout@v4
 
