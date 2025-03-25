@@ -53,13 +53,13 @@ func validateFiles(client *SSHClient, files ...string) error {
 func main() {
 	// Get SSH configuration from environment variables
 	sshUser := os.Getenv("SSH_USER")
-	sshKeyFile := os.Getenv("SSH_KEY_FILE")
+	sshKey := os.Getenv("SSH_KEY")
 	sshHost := os.Getenv("SSH_HOST")
 	sshPortStr := os.Getenv("SSH_PORT")
 	composeFile := os.Getenv("COMPOSE_FILE")
 	dockerTag := os.Getenv("DOCKER_TAG")
 
-	if sshUser == "" || sshKeyFile == "" || sshHost == "" || dockerTag == "" || composeFile == "" {
+	if sshUser == "" || sshKey == "" || sshHost == "" || dockerTag == "" || composeFile == "" || sshPortStr == "" {
 		logError("Missing required environment variables")
 		os.Exit(1)
 	}
@@ -71,7 +71,7 @@ func main() {
 	}
 
 	// Create SSH client
-	client, err := CreateSSHClient(sshUser, sshKeyFile, sshHost, sshPort)
+	client, err := CreateSSHClient(sshUser, sshKey, sshHost, sshPort)
 	if err != nil {
 		logError(fmt.Sprintf("Failed to create SSH client: %v", err))
 		os.Exit(1)
