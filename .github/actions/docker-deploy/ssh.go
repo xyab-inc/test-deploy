@@ -19,13 +19,8 @@ type SSHClient struct {
 }
 
 // CreateSSHClient creates a new SSH client with the given credentials
-func CreateSSHClient(user, keyfile, host string, port int) (*SSHClient, error) {
-	key, err := os.ReadFile(keyfile)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read private key: %v", err)
-	}
-
-	signer, err := ssh.ParsePrivateKey(key)
+func CreateSSHClient(user, key, host string, port int) (*SSHClient, error) {
+	signer, err := ssh.ParsePrivateKey([]byte(key))
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse private key: %v", err)
 	}
