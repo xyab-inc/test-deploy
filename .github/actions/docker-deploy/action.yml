@@ -25,7 +25,7 @@ runs:
   image: 'Dockerfile'
   env:
     SSH_USER: ${{ inputs.ssh_user }}
-    SSH_KEY_FILE: ${{ inputs.ssh_key }}
+    SSH_KEY_FILE: ${{ inputs.ssh_key_file }}
     SSH_HOST: ${{ inputs.ssh_host }}
     SSH_PORT: ${{ inputs.ssh_port }}
     COMPOSE_FILE: ${{ inputs.compose_file }}
