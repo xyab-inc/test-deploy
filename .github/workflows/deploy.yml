@@ -9,8 +9,8 @@ on:
 
 jobs:
   deploy-staging:
-    #runs-on: ubuntu-latest
-    runs-on: Default
+    runs-on: ubuntu-latest
+    #runs-on: Default
     steps:
       - uses: actions/checkout@v4
 
