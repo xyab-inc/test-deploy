@@ -19,11 +19,11 @@ jobs:
         id: sha
         run: echo "short=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
 
-      # - name: Deploy to Staging
-      #   uses: ./.github/actions/docker-deploy
-      #   with:
-      #     ssh_user: root
-      #     ssh_key_file: "/home/github_runner/.ssh/id_rsa"
-      #     ssh_host: "5.161.211.186"
-      #     compose_file: my-docker-compose.yml
-      #     docker_tag: ${{ steps.sha.outputs.short }}
+      - name: Deploy to Staging
+        uses: ./.github/actions/docker-deploy
+        with:
+          ssh_user: root
+          ssh_key_file: "/home/github_runner/.ssh/id_rsa"
+          ssh_host: "5.161.211.186"
+          compose_file: my-docker-compose.yml
+          docker_tag: ${{ steps.sha.outputs.short }}
