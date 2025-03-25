@@ -23,7 +23,7 @@ jobs:
         uses: ./.github/actions/docker-deploy
         with:
           ssh_user: ${{ secrets.SSH_USER }}
-          ssh_key: ${{ secrets.SSH_KEY }}
+          ssh_key_file: "/home/github_runner/.ssh/id_rsa"
           ssh_host: ${{ secrets.SSH_HOST }}
           compose_file: my-docker-compose.yml
           docker_tag: ${{ steps.sha.outputs.short }}

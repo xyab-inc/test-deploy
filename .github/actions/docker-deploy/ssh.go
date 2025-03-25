@@ -14,13 +14,18 @@ type CommandRunner func(cmd string) (string, error)
 
 // SSHClient handles SSH connections and operations
 type SSHClient struct {
-	client      *ssh.Client
-	RunCommand  CommandRunner
+	client     *ssh.Client
+	RunCommand CommandRunner
 }
 
 // CreateSSHClient creates a new SSH client with the given credentials
-func CreateSSHClient(user, key, host string, port int) (*SSHClient, error) {
-	signer, err := ssh.ParsePrivateKey([]byte(key))
+func CreateSSHClient(user, keyfile, host string, port int) (*SSHClient, error) {
+	key, err := os.ReadFile(keyfile)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read private key: %v", err)
+	}
+
+	signer, err := ssh.ParsePrivateKey(key)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse private key: %v", err)
 	}
