@@ -22,13 +22,13 @@ func createEnvFile(dockerTag string) (string, error) {
 	// Create a temporary file
 	tmpDir := os.TempDir()
 	envFile := filepath.Join(tmpDir, ".env")
-	
+
 	// Write the DOCKER_TAG to the .env file
 	content := fmt.Sprintf("DOCKER_TAG=%s\n", dockerTag)
 	if err := os.WriteFile(envFile, []byte(content), 0644); err != nil {
 		return "", fmt.Errorf("failed to create .env file: %v", err)
 	}
-	
+
 	return envFile, nil
 }
 
@@ -53,7 +53,7 @@ func validateFiles(client *SSHClient, files ...string) error {
 func main() {
 	// Get SSH configuration from environment variables
 	sshUser := os.Getenv("SSH_USER")
-	sshKey := os.Getenv("SSH_KEY")
+	sshKey := os.Getenv("SSH_KEY_FILE")
 	sshHost := os.Getenv("SSH_HOST")
 	sshPortStr := os.Getenv("SSH_PORT")
 	composeFile := os.Getenv("COMPOSE_FILE")
