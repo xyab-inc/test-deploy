@@ -33,4 +33,3 @@ runs:
     CONFIG_FILE: ${{ inputs.config-file }}
     HOST_NAME: ${{ inputs.host-name }}
     VALIDATE_ONLY: ${{ inputs.validate-only }}
-    GITHUB_WORKSPACE: ${{ github.workspace }}
