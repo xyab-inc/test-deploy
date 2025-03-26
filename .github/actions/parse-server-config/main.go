@@ -47,6 +47,7 @@ func (h *Host) UnmarshalYAML(value *yaml.Node) error {
 		Address string `yaml:"address"`
 	}
 
+	// Initialize a new HostTemp with a new HostAlias
 	temp := &HostTemp{HostAlias: (*HostAlias)(h)}
 	if err := value.Decode(temp); err != nil {
 		return fmt.Errorf("decoding host: %w", err)
@@ -58,6 +59,10 @@ func (h *Host) UnmarshalYAML(value *yaml.Node) error {
 		return fmt.Errorf("invalid address format %q, expected IP:PORT", temp.Address)
 	}
 
+	// Copy over all fields from the temporary struct
+	h.Name = temp.Name
+	h.User = temp.User
+	h.DockerCompose = temp.DockerCompose
 	h.IP = parts[0]
 	h.Port = parts[1]
 	h.address = temp.Address
