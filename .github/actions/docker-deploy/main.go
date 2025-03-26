@@ -63,7 +63,7 @@ func main() {
 	for k, v := range config {
 		t := os.Getenv(v)
 		if t == "" {
-			logError(fmt.Sprintf("Missing required environment variable: %s"))
+			logError(fmt.Sprintf("Missing required environment variable: %s", v))
 			os.Exit(1)
 		}
 		config[k] = t
