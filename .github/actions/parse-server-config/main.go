@@ -144,7 +144,7 @@ func (gh *GitHub) run() error {
 	// Validate each host has required fields
 	for _, host := range config.Hosts {
 		if host.Name == "" {
-			return fmt.Errorf("host missing required field: name")
+			return fmt.Errorf("host missing required field: name - %v", host)
 		}
 		if host.address == "" {
 			return fmt.Errorf("host %s missing required field: address", host.Name)
