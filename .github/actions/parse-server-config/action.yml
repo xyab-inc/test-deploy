@@ -1,0 +1,36 @@
+name: 'Parse Server Config'
+description: 'Parse and validate server configuration files'
+inputs:
+  config-file:
+    description: 'Path to the server configuration file relative to workspace root'
+    required: true
+  host-name:
+    description: 'Name of the host to search for in the configuration'
+    required: true
+  validate-only:
+    description: 'Only validate the configuration without applying changes'
+    required: false
+    default: 'false'
+outputs:
+  is-valid:
+    description: 'Whether the configuration is valid'
+  config-hash:
+    description: 'Hash of the parsed configuration'
+  host-found:
+    description: 'Whether the specified host was found'
+  ip:
+    description: 'IP address of the found host'
+  port:
+    description: 'Port of the found host'
+  user:
+    description: 'Username for the found host'
+  compose-path:
+    description: 'Path to the docker compose file for the host'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  env:
+    CONFIG_FILE: ${{ inputs.config-file }}
+    HOST_NAME: ${{ inputs.host-name }}
+    VALIDATE_ONLY: ${{ inputs.validate-only }}
+    GITHUB_WORKSPACE: ${{ github.workspace }}

@@ -1,0 +1,13 @@
+hosts:
+  - name: multisite-prod
+    address: 5.161.111.114:22
+    user: root
+    docker_compose:
+      path: ./deploy/apps/multisite/php.compose.yml
+
+  - name: coincrunch-prod
+    address: 178.156.163.202:22
+    user: root
+    docker_compose:
+      path: ./deploy/apps/coincrunch/php.compose.yml
+
