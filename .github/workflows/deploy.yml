@@ -104,9 +104,8 @@ jobs:
 
   deploy-staging:
     environment: staging
-    #runs-on: ubuntu-latest
-    needs: short-sha
     runs-on: self-hosted
+    needs: short-sha
     steps:
       - uses: actions/checkout@v4
 
