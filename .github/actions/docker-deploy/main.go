@@ -51,27 +51,32 @@ func validateFiles(client *SSHClient, files ...string) error {
 }
 
 func main() {
-	// Get SSH configuration from environment variables
-	sshUser := os.Getenv("SSH_USER")
-	sshKey := os.Getenv("SSH_KEY")
-	sshHost := os.Getenv("SSH_HOST")
-	sshPortStr := os.Getenv("SSH_PORT")
-	composeFile := os.Getenv("COMPOSE_FILE")
-	dockerTag := os.Getenv("DOCKER_TAG")
-
-	if sshUser == "" || sshKey == "" || sshHost == "" || dockerTag == "" || composeFile == "" || sshPortStr == "" {
-		logError("Missing required environment variables")
-		os.Exit(1)
+	config := map[string]string{
+		"sshUser":     "SSH_USER",
+		"sshKey":      "SSH_KEY",
+		"sshHost":     "SSH_HOST",
+		"sshPort":     "SSH_PORT",
+		"composeFile": "COMPOSE_FILE",
+		"dockerTag":   "DOCKER_TAG",
 	}
 
-	sshPort, err := strconv.Atoi(sshPortStr)
+	for k, v := range config {
+		t := os.Getenv(v)
+		if t == "" {
+			logError(fmt.Sprintf("Missing required environment variable: %s"))
+			os.Exit(1)
+		}
+		config[k] = t
+	}
+
+	sshPort, err := strconv.Atoi(config["sshPort"])
 	if err != nil {
 		logError(fmt.Sprintf("Invalid SSH port: %v", err))
 		os.Exit(1)
 	}
 
 	// Create SSH client
-	client, err := CreateSSHClient(sshUser, sshKey, sshHost, sshPort)
+	client, err := CreateSSHClient(config["sshUser"], config["sshKey"], config["sshHost"], sshPort)
 	if err != nil {
 		logError(fmt.Sprintf("Failed to create SSH client: %v", err))
 		os.Exit(1)
@@ -79,7 +84,7 @@ func main() {
 	defer client.Close()
 
 	// Create and transfer .env file with DOCKER_TAG
-	envFile, err := createEnvFile(dockerTag)
+	envFile, err := createEnvFile(config["dockerTag"])
 	if err != nil {
 		logError(fmt.Sprintf("Failed to create .env file: %v", err))
 		os.Exit(1)
@@ -93,8 +98,8 @@ func main() {
 	log("Successfully transferred .env file")
 
 	// Transfer docker-compose file
-	remoteComposeFile := filepath.Base(composeFile)
-	if err := client.TransferFileWithRemotePath(composeFile, remoteComposeFile); err != nil {
+	remoteComposeFile := filepath.Base(config["composeFile"])
+	if err := client.TransferFileWithRemotePath(config["composeFile"], remoteComposeFile); err != nil {
 		logError(fmt.Sprintf("Failed to transfer docker-compose file: %v", err))
 		os.Exit(1)
 	}
