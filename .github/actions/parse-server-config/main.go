@@ -40,16 +40,17 @@ type Host struct {
 
 // UnmarshalYAML implements custom unmarshaling for Host to split address into IP and Port
 func (h *Host) UnmarshalYAML(value *yaml.Node) error {
-	// Create a temporary type to avoid infinite recursion
-	type HostAlias Host
+	// Create a temporary type without the custom unmarshaler
 	type HostTemp struct {
-		*HostAlias
-		Address string `yaml:"address"`
+		Name          string        `yaml:"name"`
+		Address       string        `yaml:"address"`
+		User          string        `yaml:"user"`
+		DockerCompose DockerCompose `yaml:"docker_compose,omitempty"`
 	}
 
-	// Initialize a new HostTemp with a new HostAlias
-	temp := &HostTemp{HostAlias: (*HostAlias)(h)}
-	if err := value.Decode(temp); err != nil {
+	// Decode into the temporary struct
+	var temp HostTemp
+	if err := value.Decode(&temp); err != nil {
 		return fmt.Errorf("decoding host: %w", err)
 	}
 
@@ -59,7 +60,7 @@ func (h *Host) UnmarshalYAML(value *yaml.Node) error {
 		return fmt.Errorf("invalid address format %q, expected IP:PORT", temp.Address)
 	}
 
-	// Copy over all fields from the temporary struct
+	// Copy all fields to the target struct
 	h.Name = temp.Name
 	h.User = temp.User
 	h.DockerCompose = temp.DockerCompose
