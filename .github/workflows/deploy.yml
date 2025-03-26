@@ -105,7 +105,7 @@ jobs:
   deploy-staging:
     environment: staging
     #runs-on: ubuntu-latest
-    # needs: build-coincrunch
+    needs: short-sha
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
