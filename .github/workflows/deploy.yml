@@ -25,7 +25,7 @@ jobs:
   detect-changes:
     name: Detect Changed Apps
     needs: short-sha
-    runs-on: [self-hosted, linux, builder]
+    runs-on: [self-hosted]
     outputs:
       coincrunch_changed: ${{ steps.filter.outputs.coincrunch }}
       multisite_changed: ${{ steps.filter.outputs.multisite }}
